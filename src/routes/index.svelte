@@ -1,6 +1,6 @@
 <script type="typescript">
+	import { session } from '~stores';
   import {onMount} from 'svelte';
-  import {session} from '~/stores';
   import Cookies from 'js-cookie';
 
   let isProceedSession: boolean = false;

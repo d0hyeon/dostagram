@@ -5,9 +5,10 @@
       "isolatedModules": false,
       "baseUrl": "./src/",
       "paths": {
-        "~/*": [
-          "./*"
-        ],
+        "~components": ["./components"],
+        "~stores": ["./stores"],
+        "~types": ["./types"],
+        "~src": ["."]
       }
 		},
 		"include": ["src/**/*", "src/node_modules/**/*"],

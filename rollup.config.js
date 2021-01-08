@@ -26,7 +26,10 @@ export const preprocess = svelteProcess({
 
 const alias = genderatorAlias({
   entries: [
-    {find: '~/', replacement: './src/'}
+    {find: '~components', replacement: path.resolve(__dirname, 'src/components')},
+    {find: '~types', replacement: path.resolve(__dirname, 'src/types')},
+    {find: '~stores', replacement: path.resolve(__dirname, 'src/stores')},
+    {find: '~root', replacement: path.resolve(__dirname, 'src')}
   ]
 })
 
@@ -63,8 +66,7 @@ export default {
 			}),
 			commonjs(),
       typescript({ sourceMap: dev }),
-      
-
+      alias,
 			legacy && babel({
 				extensions: ['.js', '.mjs', '.html', '.svelte', '.ts'],
 				babelHelpers: 'runtime',
@@ -80,9 +82,12 @@ export default {
 						useESModules: true
           }],
           ["module-resolver", {
-            src: './src',
+            root: ['./src/'],
             "alias": {
-              "~/": "./"
+              "~components": "./components",
+              "~types": "./types",
+              "~stores": "./stores",
+              "~root": "./"
             }
           }]
 				]
@@ -123,7 +128,8 @@ export default {
 			resolve({
 				dedupe: ['svelte']
 			}),
-			commonjs(),
+      commonjs(),
+      alias,
 			typescript({ sourceMap: dev })
 		],
 		external: Object.keys(pkg.dependencies).concat(require('module').builtinModules),
