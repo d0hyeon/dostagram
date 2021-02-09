@@ -3,6 +3,8 @@
   import {onMount} from 'svelte';
   import Cookies from 'js-cookie';
 
+  import Intro from '~components/Intro.svelte';
+
   let isProceedSession: boolean = false;
 
   onMount(() => {
@@ -16,12 +18,21 @@
 
 {#if isProceedSession}
   {#if $session}
-    <div>안녕?</div>
+    <div><p>안녕?</p></div>
   {:else}
-    <div>로그인 을 해줄래?</div>
+    <Intro />
   {/if}
 {/if}
 
 <style lang="scss">
-	
+  div {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ddd;
+
+    p {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
 </style>
