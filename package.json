@@ -12,6 +12,7 @@
   "dependencies": {
     "compression": "^1.7.1",
     "js-cookie": "^2.2.1",
+    "nanoid": "^3.1.20",
     "polka": "next",
     "sirv": "^1.0.0"
   },
