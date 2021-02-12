@@ -1,20 +1,39 @@
+<script type="ts" context="module"> 
+  export type Value = string;
+  export type Type = 'text' | 'password' | 'number';
+  export type Placeholder = string;
+  export type MaxLength = number | undefined;
+  export type MinLength = number | undefined;
+</script>
 <script type="ts">
   import { nanoid } from 'nanoid';
-  type Value = string;
-  type Type = 'text' | 'password' | 'number';
-  type Placeholder = string;
-  type MaxLength = number | undefined;
-  type MinLength = number | undefined;
+  import type {Rule} from 'src/@types/rule';
 
   export let value: Value = '';
   export let maxLength: MaxLength;
   export let minLength: MinLength;
   export let type: Type = 'text';
   export let placeholder: Placeholder = '';
+  export let rules: Rule[];
   
   const id = nanoid();
+  let message = '';
+  let targetValue = value;
 
-  $: onChange = (event) => {
+  $: validateRules = (value) => {
+    for(let i = 0, length = rules.length; i < length; i ++) {
+      const rule = rules[i];
+      if(rule.required && !value) {
+        return rule.message;
+      }
+      if(rule.pattern && !rule.pattern.test(value)) {
+        return rule.message;
+      }
+    }
+  }
+
+  $: handleChange = (event) => {
+    targetValue = event.target.value;
     if(maxLength && value.length > maxLength) {
       event.preventDefault();
       return;
@@ -23,20 +42,39 @@
       event.preventDefault();
       return;
     }
+    if(rules) {
+      const errorMsg = validateRules(event.target.value);
+      if(errorMsg) {
+        message = errorMsg;
+        return false;
+      }
+    }
+    message = '';
     value = event.target.value;
+  }
+
+  $: handleBulr = (event) => {
+    targetValue = event.target.value;
+    const errorMsg = validateRules(event.target.value);
+    if(errorMsg) {
+      message = errorMsg;
+    }
   }
   
 </script>
 
 <div class="field">
   <label for={id} class="field__label">
-    <span class="field__label-text" class:active={!!value}>{placeholder}</span>
-    <input id={id} type={type} value={value} min={minLength} max={maxLength} class="field__label-input" class:active={!!value} on:input={onChange}/>
+    <span class="field__label-text" class:active={!!targetValue}>{placeholder}</span>
+    <input id={id} type={type} value={value} min={minLength} max={maxLength} class="field__label-input" class:active={!!targetValue} on:input={handleChange} on:blur={handleBulr}/>
   </label>
   <div class="field__icon">
     <slot></slot>
   </div>
 </div>
+{#if message}
+<p class="error">{message}</p>
+{/if}
 
 <style lang="scss">
   .field {
@@ -82,6 +120,12 @@
         }
       }
     }
+  }
+
+  .error {
+    margin-top: 5px;
+    color: red;
+    text-align: left;
   }
   
 </style>
