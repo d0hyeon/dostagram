@@ -1,38 +1,35 @@
+<script type="ts" context="module">
+  declare global {
+    interface Window {
+      firebase: any;
+    }
+  }
+</script>
 <script type="typescript">
-	import { session } from '~stores';
-  import {onMount} from 'svelte';
+  import { onMount } from 'svelte';
   import Cookies from 'js-cookie';
-
   import Intro from '~components/Intro.svelte';
+  import { accessState } from 'src/stores/access';
 
   let isProceedSession: boolean = false;
-
   onMount(() => {
-    const cookie = JSON.parse(Cookies.get('session') || '{}');
-    if(cookie.access) {
-      $session = cookie;
+    const cookie = Cookies.get('access') || null;
+    
+    if(cookie) {
+      $accessState = cookie;
     }
     isProceedSession = true;
   });
 </script>
 
 {#if isProceedSession}
-  {#if $session}
-    <div><p>안녕?</p></div>
+  {#if $accessState}
+    로그인 완료
   {:else}
     <Intro />
   {/if}
 {/if}
 
 <style lang="scss">
-  div {
-    width: 100px;
-    height: 100px;
-    border: 1px solid #ddd;
 
-    p {
-      font-size: 20px;
-      font-weight: bold;
-    }
-  }
 </style>
