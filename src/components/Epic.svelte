@@ -8,24 +8,27 @@
   
   onMount(() => {
     const unsubscribeAccess = accessState.subscribe(access => {
-      Cookies.set('access', access, {expires: 7});
-      const db = firebase.firestore();
-      db.collection('user').where('uid', '==', access).get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            const user = doc.data();
-            if(user) {
-              userState.update(prev => ([
-                ...prev,
-                user.id
-              ]));
-              userMapState.update(prev => ({
-                ...prev,
-                [user.uid]: user
-              }))
-            }
+      if(access) {
+        const db = firebase.firestore();
+        
+        Cookies.set('access', access, {expires: 7});
+        db.collection('user').where('uid', '==', access).get()
+          .then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+              const user = doc.data();
+              if(user) {
+                userState.update(prev => ([
+                  ...prev,
+                  user.id
+                ]));
+                userMapState.update(prev => ({
+                  ...prev,
+                  [user.uid]: user
+                }))
+              }
+            })
           })
-        })
+      }
     });
 
     return () => {
