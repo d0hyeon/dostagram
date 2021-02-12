@@ -1,16 +1,12 @@
 {
 		"extends": "@tsconfig/svelte/tsconfig.json",
 		"compilerOptions": {
-      "lib": ["DOM", "ES2017", "WebWorker"],
-      "isolatedModules": false,
-      "baseUrl": "./src/",
+			"lib": ["DOM", "ES2017", "WebWorker"],
+      "baseUrl": ".",
       "paths": {
-        "~components": ["./components"],
-        "~stores": ["./stores"],
-        "~types": ["./types"],
-        "~src": ["."]
+        "~components": ["./src/components"],
       }
 		},
 		"include": ["src/**/*", "src/node_modules/**/*"],
-    "exclude": ["node_modules/*", "__sapper__/*", "static/*"],
+		"exclude": ["node_modules/*", "__sapper__/*", "static/*"]
 	}
