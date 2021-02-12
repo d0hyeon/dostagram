@@ -1,7 +1,11 @@
 <script type="ts">
-  import {goto} from '@sapper/app';
-
+  import { goto } from '@sapper/app';
+  import { onMount } from 'svelte';
+  import Cookies from 'js-cookie';
+  
+  import { accessState } from '../../stores/access'
   import Input from '~components/inputs/Input.svelte';
+  import firebase from 'src/utils/firebase';
 
   type OnSuccess = (session: any) => void;
   
@@ -9,28 +13,44 @@
     goto('/index');
   }
 
-  let username: string = '';
+  let id: string = '';
   let password: string = '';
-  let isShowPassword: boolean = false;
+  let isShowPassword: boolean = false;  
+
+  onMount(() => {
+
+    const unsubscribe = accessState.subscribe(access => {
+      if(access) {
+        Cookies.set('access', access, {expires: 7});
+      }
+    });
+
+    return () => unsubscribe();
+  });
 
   $: handleClickPwIcon = () => {
     isShowPassword = !isShowPassword;
   }
-
-  $: {
-    console.log(username);
+  $: handleFormSubmit = (event) => {
+    event.preventDefault();
+    
+    firebase.auth().signInWithEmailAndPassword(id, password)
+      .then(({user: {uid}}) => {
+        accessState.set(uid);
+      })
+      .catch(console.error)
   }
 
   
 </script>
 
-<div class="login-form">
+<div class="form">
   <div class="container">
     <h1>Dostagram</h1>
-    <form>
+    <form on:submit={handleFormSubmit}>
       <ul class="fields">
         <li>
-          <Input bind:value={username} placeholder="전화번호, 사용자 이름 또는 이메일" />
+          <Input bind:value={id} placeholder="전화번호, 사용자 이름 또는 이메일" />
         </li>
         <li>
           <Input bind:value={password} type={isShowPassword ? 'text' : 'password'} placeholder="비밀번호" >
@@ -40,7 +60,7 @@
           </Input>
         </li>
         <li class="field-button">
-          <button type="submit" disabled={!(username || password)}>로그인</button>
+          <button type="submit" disabled={!(id || password)}>로그인</button>
         </li>
       </ul>
       <div class="line">
@@ -76,7 +96,7 @@
     }
   }
 
-  .login-form {
+  .form {
     h1 {
       width: 105px;
       height: 47px;
