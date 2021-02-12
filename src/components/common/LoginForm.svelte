@@ -6,6 +6,7 @@
   import { accessState } from '../../stores/access'
   import Input from '~components/inputs/Input.svelte';
   import firebase from 'src/utils/firebase';
+  import { PASSWORD_RULES, EMAIL_RULES } from 'src/constants/rules';
 
   type OnSuccess = (session: any) => void;
   
@@ -13,20 +14,9 @@
     goto('/index');
   }
 
-  let id: string = '';
+  let email: string = '';
   let password: string = '';
   let isShowPassword: boolean = false;  
-
-  onMount(() => {
-
-    const unsubscribe = accessState.subscribe(access => {
-      if(access) {
-        Cookies.set('access', access, {expires: 7});
-      }
-    });
-
-    return () => unsubscribe();
-  });
 
   $: handleClickPwIcon = () => {
     isShowPassword = !isShowPassword;
@@ -34,7 +24,7 @@
   $: handleFormSubmit = (event) => {
     event.preventDefault();
     
-    firebase.auth().signInWithEmailAndPassword(id, password)
+    firebase.auth().signInWithEmailAndPassword(email, password)
       .then(({user: {uid}}) => {
         accessState.set(uid);
       })
@@ -50,17 +40,17 @@
     <form on:submit={handleFormSubmit}>
       <ul class="fields">
         <li>
-          <Input bind:value={id} placeholder="전화번호, 사용자 이름 또는 이메일" />
+          <Input bind:value={email} placeholder="이메일" rules={EMAIL_RULES} />
         </li>
         <li>
-          <Input bind:value={password} type={isShowPassword ? 'text' : 'password'} placeholder="비밀번호" >
+          <Input bind:value={password} type={isShowPassword ? 'text' : 'password'} placeholder="비밀번호" rules={PASSWORD_RULES}>
             {#if password}
               <button type="button" class="input-icon" on:click={handleClickPwIcon}>비밀번호 {isShowPassword ? '숨기기' : '표시'}</button>
             {/if}
           </Input>
         </li>
         <li class="field-button">
-          <button type="submit" disabled={!(id || password)}>로그인</button>
+          <button type="submit" disabled={!(email || password)}>로그인</button>
         </li>
       </ul>
       <div class="line">
