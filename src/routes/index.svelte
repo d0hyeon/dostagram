@@ -1,10 +1,3 @@
-<script type="ts" context="module">
-  declare global {
-    interface Window {
-      firebase: any;
-    }
-  }
-</script>
 <script type="typescript">
   import { onMount } from 'svelte';
   import Cookies from 'js-cookie';
@@ -13,8 +6,8 @@
 
   let isProceedSession: boolean = false;
   onMount(() => {
-    const cookie = Cookies.get('access') || null;
-    
+    const cookie = Cookies.get('access');
+
     if(cookie) {
       $accessState = cookie;
     }
