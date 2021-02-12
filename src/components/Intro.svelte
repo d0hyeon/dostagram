@@ -66,7 +66,6 @@
   }
   section {
     display: flex;
-    max-width: 935px;
     margin: 30px auto;
     align-items: flex-start;
     text-align: center;
