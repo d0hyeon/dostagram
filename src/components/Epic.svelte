@@ -1,5 +1,5 @@
 <script type="ts">
-  
+  import Cookies from 'js-cookie';
   import {onMount} from 'svelte';
 
   import firebase from 'src/utils/firebase';
@@ -8,6 +8,7 @@
   
   onMount(() => {
     const unsubscribeAccess = accessState.subscribe(access => {
+      Cookies.set('access', access, {expires: 7});
       const db = firebase.firestore();
       db.collection('user').where('uid', '==', access).get()
         .then(querySnapshot => {
